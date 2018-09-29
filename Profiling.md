@@ -130,7 +130,7 @@ There is a clear shift in genera level structure over time.
 We can generate this plot either locally or on the server by:
 
 ```
-cp ~/Data/InfantGut/Meta.csv .
+cp ~/Storage/Data/InfantGut/Meta.csv .
 Rscript ~/bin/GeneraFreqNMDS.R 
 ```
 
