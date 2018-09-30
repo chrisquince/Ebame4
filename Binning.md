@@ -229,9 +229,10 @@ sed 's/Map\///g' clustering_gt1000_cov.csv > clustering_gt1000_covR.csv
 ```
 
 Discussion point, how do we calculate cluster coverages?
-
 ```
-cp ~/bin/ClusterCovNMDS.R .
+cd ~/Projects/InfantGut/Concoct
+cp ~/repos/Ebame4/scripts/ClusterCovNMDS.R .
+cp ../Meta.csv .
 Rscript ./ClusterCovNMDS.R
 ```
 
@@ -241,13 +242,9 @@ How well does this correlate with time/replicates.
 
 
 Also plot some time series:
-
 ```
-cd ~/repos
-git clone https://github.com/chrisquince/PenrynTutorial.git
-cd ~/Projects/InfantGut/Concoct
-cp ~/repos/PenrynTutorial/TimeSeries.R .
-cp ~/Data/InfantGut/sharon_mappingR.txt .
+cp ~/repos/Ebame4/scripts/TimeSeries.R .
+Rscript ./TimeSeries.R 
 ```
 
 ![TimeSeries](./Figures/TimeSeries.png) 
@@ -284,15 +281,15 @@ SplitFaa.pl ../Annotate/final_contigs_gt1000_c10K.faa ../Concoct/clustering_gt10
 
 ```
 cd ~/Projects/InfantGut/Annotate
-kraken --db ~/Databases/minikraken_20141208/ --threads 8 --preload --output final_contigs_gt1000_c10K.krak final_contigs_gt1000_c10K.fa
+kraken --db ~/Storage/Databases/minikraken_20171019_8GB --threads 8 --preload --output final_contigs_gt1000_c10K.krak final_contigs_gt1000_c10K.fa
 ```
 
 ```
-kraken-report --db ~/Databases/minikraken_20141208/ final_contigs_gt1000_c10K.krak 
+kraken-report --db ~/Storage/Databases/minikraken_20171019_8GB final_contigs_gt1000_c10K.krak 
 ```
 
 ```
-kraken-translate --mpa-format --db ~/Databases/minikraken_20141208/ final_contigs_gt1000_c10K.krak > final_contigs_gt1000_c10K.krak.mpi.tran
+kraken-translate --mpa-format --db ~/Storage/Databases/minikraken_20171019_8GB final_contigs_gt1000_c10K.krak > final_contigs_gt1000_c10K.krak.mpi.tran
 ```
 
 ```
@@ -346,7 +343,7 @@ while read line
 do
     cog=$line
     echo $cog
-    cat ~/Databases/NCBI/Cogs/All_$cog.ffn SCGs/${cog}.ffn > AlignAll/${cog}_all.ffn
+    cat ~/Storage/Databases/Combined/Cogs/All_${cog}.ffn SCGs/${cog}.ffn > AlignAll/${cog}_all.ffn
     mafft --thread 12 AlignAll/${cog}_all.ffn > AlignAll/${cog}_all.gffn
 done < cogs.txt
 ```
@@ -396,10 +393,12 @@ Visualise this locally with FigTree or on the web with ITOL
 
 Kegg ortholog assignment on genes:
 ```
-python ~/bin/CompleteClusters.py ../Concoct/clustering_gt1000_scg.tsv > Cluster75.txt
+cd ~/Projects/InfantGut/Split
+python ~/repos/Ebame4/scripts/CompleteClusters.py ../Concoct/clustering_gt1000_scg.tsv > Cluster75.txt
 ```
 
 ```
+    export KEGG_DB=~/Storage/Databases/KeggUpdate/
     while read line
     do 
         file=${line}/${line}.faa
@@ -411,43 +410,23 @@ python ~/bin/CompleteClusters.py ../Concoct/clustering_gt1000_scg.tsv > Cluster7
     done < Cluster75.txt
 ```
 
-Probably too slow so run this instead:
-
-```
-while read line
-do 
-    echo $file
-  
-    file=${line}/${line}.m8
-  
-    cp ~/Projects_run/InfantGut/Split/$file $file
-  
-done < Cluster75.txt
-```
 
 
 Discussion point why blastp rather than blastx?
 
 The above maps onto Kegg genes these are then mapped to kegg orthologs by the Perl script:
 ```
-more ~/bin/Assign_KO.pl
+more ~/repos/Ebame4/scripts/Assign_KO.pl
 ```
 
 Run as follows:
 ```
-COUNT=0
 for file in Cluster*/*m8
 do
 	dir=${file%.m8}
 	echo $file
 	echo $dir
-     Assign_KO.pl < $file > ${dir}.hits&
-    let COUNT=COUNT+1
-
-    if [ $COUNT -eq 8 ]; then
-        wait;
-        COUNT=0
-    fi
+    Assign_KO.pl < $file > ${dir}.hits&
 done
 ```
 
