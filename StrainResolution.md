@@ -26,7 +26,7 @@ cd ..
 
 We will run DESMAN on two complete clusters with more than 50fold coverage. Find these with the following simple script:
 ```
-python3 ~/bin/CompleteClustersCov.py Concoct/clustering_gt1000_scg.tsv Concoct/clustering_gt1000_covR.csv > Split/Comp50.txt
+python3 ~/repos/Ebame4/scripts/CompleteClustersCov.py Concoct/clustering_gt1000_scg.tsv Concoct/clustering_gt1000_covR.csv > Split/Comp50.txt
 ```
 
 What species are these clusters likely from?
@@ -103,7 +103,7 @@ done < Split/Comp50.txt
 
 The directory contains 2 .freq files one for each cluster. If we look at one:
 ```bash
-head -n 10 Variants/Cluster7_scg.freq 
+head -n 10 Variants/Cluster9_scg.freq 
 ```
 We see it comprises a header, plus one line for each core gene position, giving base frequencies in the order A,C,G,T. This is the input required by DESMAN.
 
@@ -145,15 +145,15 @@ cd SCG_Analysis
 wc */*sel_var.csv
 ```
 
-We can also go into the Cluster 7 directory and look at the output files:
+We can also go into the Cluster 14 directory and look at the output files:
 ```bash
-cd Cluster7_scg
-more Cluster7_scgsel_var.csv 
+cd Cluster14_scg
+more Cluster14_scgsel_var.csv 
 ```
 
 The other important file is:
 ```bash
-more Cluster7_scgtran_df.csv
+more Cluster14_scgtran_df.csv
 ```
 
 This is an estimate of base error rates which is used as a starting point for the haplotype inference.
@@ -161,15 +161,15 @@ This is an estimate of base error rates which is used as a starting point for th
 
 ### Inferring haplotypes
 
-So accounting for the header line we observe 214 and 9 variants in Clusters 7 and 20 respectively. 
-For Cluster 7 then can we attempt to resolve haplotypes. Using the desman executable:
+So accounting for the header line we observe 185 and 10 variants in Clusters 14 and 9 respectively. 
+For Cluster 14 then can we attempt to resolve haplotypes. Using the desman executable:
 
 ```
-cd Cluster7_scg
+cd Cluster14_scg
 
-varFile='Cluster7_scgsel_var.csv'
+varFile='Cluster14_scgsel_var.csv'
 
-eFile='Cluster7_scgtran_df.csv'
+eFile='Cluster14_scgtran_df.csv'
     
 for g in 1 2 3 4  
 do
@@ -177,7 +177,7 @@ do
     for r in 0 1 2 3 4
     do
 	    echo $r
-        (desman $varFile -e $eFile -o Cluster7_${g}_${r} -g $g -s $r -m 1.0 -i 100)& 
+        (desman $varFile -e $eFile -o Cluster14_${g}_${r} -g $g -s $r -m 1.0 -i 100)& 
     done
     wait
 done
@@ -199,12 +199,12 @@ $DESMAN/scripts/PlotDev.R -l Dev.csv -o Dev.pdf
 There are two or possibly three haplotypes. We can also run the heuristic to determine haplotype number:
 
 ```bash
-python $DESMAN/scripts/resolvenhap.py Cluster7
+python $DESMAN/scripts/resolvenhap.py Cluster14
 ```
 
 This should output:
 ```
-3,3,3,0.0288161993769,Cluster7_3_3/Filtered_Tau_star.csv
+2,2,1,0.0033967391304347825,Cluster14_2_1/Filtered_Tau_star.csv
 ```
 
 This has the format:
@@ -214,7 +214,7 @@ No of haplotypes in best fit, No. of good haplotypes in best fit, Index of best 
 
 Have a look at the prediction file:
 ```
-more Cluster7_3_3/Filtered_Tau_star.csv
+more Cluster14_2_1/Filtered_Tau_star.csv
 ```
 
 The position encoding is ACGT so what are the base predictions at each variant position? 
@@ -222,34 +222,32 @@ We can turn these into actual sequences with the following commands:
 
 ```bash
 
-    cut -d"," -f 1 < Cluster7_scgsel_var.csv | sort | uniq | sed '1d' > coregenes.txt
+    cut -d"," -f 1 < Cluster14_scgsel_var.csv | sort | uniq | sed '1d' > coregenes.txt
 
-    mkdir SCG_Fasta_3_3
+    mkdir SCG_Fasta_2_1
     
-    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster7/Cluster7_core.cogs Cluster7_3_3/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_3_3/
+    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster14/Cluster14_core.cogs Cluster14_2_1/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_2_1/
 ```
 
 This generates one fasta sequence file for each gene with the two strains in:
 
 ```bash
-ls SCG_Fasta_3_3
+ls SCG_Fasta_2_1
 ```
 
 
 ```bash
-python $DESMAN/scripts/validateSNP2.py Cluster7_3_3/Filtered_Tau_star.csv Cluster7_3_3/Filtered_Tau_star.csv
+python $DESMAN/scripts/validateSNP2.py Cluster14_2_1/Filtered_Tau_star.csv Cluster14_2_1/Filtered_Tau_star.csv
 ``` 
 
 
 This gives distance matrices between the true variants and the predictions in terms of SNV and fractions:
 ```bash
-Intersection: 214
-[[  0  89 157]
- [ 89   0 183]
- [157 183   0]]
-[[ 0.          0.41588785  0.73364486]
- [ 0.41588785  0.          0.85514019]
- [ 0.73364486  0.85514019  0.        ]]
+Intersection: 184
+[[ 0 64]
+ [64  0]]
+[[0.         0.34782609]
+ [0.34782609 0.        ]]
 ```
 
 Now look at time series of strain abundance:
