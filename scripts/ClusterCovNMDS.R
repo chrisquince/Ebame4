@@ -6,7 +6,7 @@ library(plyr)
 ClusterK <- read.csv("clustering_gt1000_covR.csv",header=TRUE,row.names=1)
 ClusterK <- t(ClusterK)
 ClusterP <- ClusterK/rowSums(ClusterK)
-Meta <- read.table("~/Data/InfantGut/sharon_mappingR.txt",sep='\t',header=TRUE)
+Meta <- read.csv("Meta.csv",header=TRUE)
 rownames(Meta) <- Meta$Sample
 
 
