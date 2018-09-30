@@ -144,6 +144,8 @@ do
     echo $stub  
     (samtools view -h -b -S $file > ${stub}.bam;samtools view -b -F 4 ${stub}.bam > ${stub}.mapped.bam;samtools sort -m 1000000000 ${stub}.mapped.bam -o ${stub}.mapped.sorted.bam; bedtools genomecov -ibam ${stub}.mapped.sorted.bam -g Assembly/Lengths.txt > ${stub}_cov.txt)&
 done
+
+wait
 ```
 Collate coverages together:
 
@@ -194,7 +196,7 @@ Find genes using prodigal:
 
 Assign COGs change the -c flag which sets number of parallel processes appropriately:
 ```
-    export COGSDB_DIR=~/Databases/rpsblast_cog_db
+    export COGSDB_DIR=~/Storage/Databases/rpsblast_cog_db
     $CONCOCT/scripts/RPSBLAST.sh -f final_contigs_gt1000_c10K.faa -p -c 12 -r 1
 ```
 
@@ -206,14 +208,6 @@ python $CONCOCT/scripts/COG_table.py -b ../Annotate/final_contigs_gt1000_c10K.ou
 
 This should result in 5 clusters with 75% single copy copy SCGs:
 
-## Can also run CheckM on individual clusters
-
-CheckM is a very useful 3rd party program for cluster validation...
-
-```
-cd ~/Projects/InfantGut/Split
-checkm lineage_wf -t 8 -x fa Cluster7 Cluster7_cm
-```
 <a name="MAGs"/>
 
 ## Metagenome assembled genomes (MAGs)
