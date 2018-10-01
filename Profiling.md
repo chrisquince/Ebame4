@@ -134,6 +134,7 @@ cp ~/Storage/Data/InfantGut/Meta.csv .
 Rscript ~/bin/GeneraFreqNMDS.R 
 ```
 
+
 Discussion points:
 1. Non-metric multidimensional scaling
 2. Multivariate permutational ANOVA
@@ -161,7 +162,7 @@ do
     rfile=ReadsSub/${stub}_R2.fastq
     echo $stub
     
-    python ~/Installation/metaphlan2/metaphlan2.py $file,$rfile --bowtie2out MetaphlanResults/${stub}.bowtie2.bz2 --input_type fastq --nproc 8 > MetaphlanResults/${stub}_pm.txt
+    python ~/Storage/Installation/metaphlan2/metaphlan2.py $file,$rfile --bowtie2out MetaphlanResults/${stub}.bowtie2.bz2 --input_type fastq --nproc 8 > MetaphlanResults/${stub}_pm.txt
 done
 ```
 
@@ -169,13 +170,12 @@ done
 
 Then when we are done we merge these tables:
 ```
-python ~/Installation/metaphlan2/utils/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanResults/merged_abundance_table.txt
-python ~/Installation/metaphlan2/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanMerged/merged_abundance_table.txt
+python ~/Storage/Installation/metaphlan2/utils/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanResults/merged_abundance_table.txt
 ```
 
 and select species:
 ```
-SelectSpecies.pl < MetaphlanResults/merged_abundance_table.txt > MetaphlanResults/Species.tsv
+~/repos/Ebame4/scripts/SelectSpecies.pl < MetaphlanResults/merged_abundance_table.txt > MetaphlanResults/Species.tsv
 ```
 
 
@@ -185,7 +185,7 @@ SelectSpecies.pl < MetaphlanResults/merged_abundance_table.txt > MetaphlanResult
 To perform functional gene profiling we will use Diamond to map against the KEGG database. 
 First we will set an environmental variable to point to our copy of the Kegg:
 ```
-export KEGG_DB=~/Databases/keggs_database/KeggUpdate/
+export KEGG_DB=~/Storage/Databases/KeggUpdate
 ```
 ```
 cd ~/Projects/InfantGut
@@ -203,6 +203,8 @@ do
 done
 ```
 
+With more time would probably apply the diamond --sensitive option or similar.
+
 Having mapped reads to the KEGG genes we can collate these into ortholog coverages:
 ```
 for file in KeggD/*.m8
@@ -211,9 +213,10 @@ do
 
     echo $stub
     
-    python ~/bin/CalcKOCov.py $file $KEGG_DB/ko_genes_length.csv $KEGG_DB/genes/ko/ko_genes.list > ${stub}_ko_cov.csv
+    python ~/repos/Ebame4/scripts/CalcKOCov.py $file $KEGG_DB/ko_genes_length.csv $KEGG_DB/genes/ko/ko_genes.list > ${stub}_ko_cov.csv&
 
 done
+
 ```
 
 Note this script uses a hard coded read length of 150 nt or 50 aa.
@@ -239,7 +242,7 @@ do
     stub=${file%_ko_cov.csv}
 
     echo $stub
-    python ~/bin/MapKO.py $KEGG_DB/genes/ko/ko_module.list $file > ${stub}_mod_cov.csv 
+    python ~/repos/Ebame4/scripts/MapKO.py $KEGG_DB/genes/ko/ko_module.list $file > ${stub}_mod_cov.csv& 
 done
 ```
 
