@@ -1,14 +1,15 @@
+#!/bin/bash
+
 #Install megahit
 cd ~
 mkdir bin
+mkdir repos
 cd ~/repos
 git clone https://github.com/voutcn/megahit
 cd megahit/
-sudo apt-get install zlib1g-dev
+sudo apt-get install --assume-yes zlib1g-dev
 make
 cp megahit* ~/bin
-mkdir repos
-mv megahit repos
 
 # Install BWA
 cd ~/repos
@@ -18,7 +19,7 @@ cp bwa ~/bin
 
 #bam-readcount
 cd ~/repos
-sudo apt-get install build-essential git-core cmake zlib1g-dev libncurses-dev patch
+sudo apt-get install --assume-yes build-essential git-core cmake zlib1g-dev libncurses-dev patch
 git clone https://github.com/genome/bam-readcount.git
 mkdir bam-readcount-build
 cd bam-readcount-build/
@@ -31,14 +32,14 @@ cd ~/repos
 wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
 tar xvfj samtools-1.3.1.tar.bz2 
 cd samtools-1.3.1/ 
-sudo apt-get install libcurl4-openssl-dev libssl-dev
+sudo apt-get install --assume-yes libcurl4-openssl-dev libssl-dev
 ./configure --enable-plugins --enable-libcurl --with-plugin-path=$PWD/htslib-1.3.1
 make all plugins-htslib
 cp samtools ~/bin/  
 
 #bedtools
 cd ~/repos
-sudo apt-get install bedtools
+sudo apt-get install --assume-yes bedtools
 
 #prodigal
 cd ~/repos
@@ -47,13 +48,14 @@ cp prodigal.linux ~/bin/prodigal
 chmod +rwx ~/bin/prodigal
 
 #gnu parallel
-sudo apt-get install parallel
-sudo apt install fasttree
+sudo apt-get install --assume-yes parallel
+sudo apt install --assume-yes fasttree
  
 #mafft
-sudo apt install mafft
+sudo apt install --assume-yes mafft
 
 #standalone blast
+cd ~/repos
 wget https://desmandatabases.s3.climb.ac.uk/ncbi-blast-2.5.0+-x64-linux.tar.gz
 
 tar -xvzf ncbi-blast-2.5.0+-x64-linux.tar.gz
@@ -74,7 +76,8 @@ sudo echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | sudo tee -a /
 gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
  gpg -a --export E084DAB9 | sudo apt-key add -
  sudo apt-get update
-sudo apt-get install r-base r-base-dev
+sudo apt-get install --assume-yes r-base r-base-dev
+
 
 cd ~/repos/
 git clone https://github.com/scapella/trimal
@@ -82,41 +85,42 @@ cd trimal/source
 make
 cp trimal ~/bin/
 
-
 #install Spades
+cd ~
+mkdir Storage
+sudo mount /dev/vdb Storage
+sudo chown -R ubuntu:ubuntu Storage
+
+mkdir ~/Storage/Installation
 cd ~/Storage/Installation
 wget http://cab.spbu.ru/files/release3.10.1/SPAdes-3.10.1-Linux.tar.gz
 tar -xzf SPAdes-3.10.1-Linux.tar.gz
 cd SPAdes-3.10.1-Linux/bin/
-
+echo 'export PATH=~/Storage/Installation/SPAdes-3.10.1-Linux/bin:$PATH' >> ~/.bashrc 
 
 #Install databases
-mkdir ~/Databases
-cd ~/Databases
+mkdir ~/Storage/Databases
+
+cd ~/Storage/Databases
 wget https://desmandatabases.s3.climb.ac.uk/rpsblast_cog_db.tar.gz
 tar -xvzf rpsblast_cog_db.tar.gz
 
 
 #Install NR
-cd ~/Databases
-mkdir NR
-cd NR
-wget https://desmandatabases.s3.climb.ac.uk/nr.faa
-diamond makedb --in nr.faa -d nr
+#cd ~/Storage/Databases
+#mkdir NR
+#cd NR
+#wget https://desmandatabases.s3.climb.ac.uk/nr.faa
+#diamond makedb --in nr.faa -d nr
 
-mkdir Storage
-sudo mount /dev/vdb Storage
-chown -R ubuntu:ubuntu Storage
-
-mv ~/Databases Storage
-cd ~/Storage/Databases/NR
-diamond makedb --in nr.faa -d nr
-wget https://desmandatabases.s3.climb.ac.uk/gi_taxid_prot.dmp
-wget https://desmandatabases.s3.climb.ac.uk/all_taxa_lineage_notnone.tsv
+#wget https://desmandatabases.s3.climb.ac.uk/gi_taxid_prot.dmp
+#wget https://desmandatabases.s3.climb.ac.uk/all_taxa_lineage_notnone.tsv
 
 cd ~/Storage/Databases
 wget https://kegg.s3.climb.ac.uk/KeggUpdate.tar.gz
+tar -xvzf KeggUpdate.tar.gz
 
+#Stopped here
 
 cd ~/repos
 sudo apt-get -y install python-pip python3-pip 
@@ -124,7 +128,7 @@ pip install cython numpy scipy biopython pandas pip scikit-learn pysam bcbio-gff
 pip3 install cython numpy scipy biopython pandas pip scikit-learn pysam bcbio-gff
 
 #install gsl
-sudo apt-get install libgsl-dev
+sudo apt-get install --assume-yes libgsl-dev
 
 #install CONCOCT development branch
 cd ~/repos
@@ -144,21 +148,21 @@ git clone https://github.com/chrisquince/Ebame4.git
 git clone https://github.com/chrisquince/MAGAnalysis.git
 
 #Added these lines to .bashrc
-export CONCOCT=~/repos/CONCOCT
-export DESMAN=~/repos/DESMAN
-export PATH=~/repos/Ebame4/scripts:$PATH
+echo 'export CONCOCT=~/repos/CONCOCT' >> ~/.bashrc 
+echo 'export DESMAN=~/repos/DESMAN' >> ~/.bashrc 
+echo 'export PATH=~/repos/Ebame4/scripts:$PATH' >> ~/.bashrc 
+
 
 cd ~/Storage/
   
 mkdir Data
 cd Data
-
+mkdir InfantGut
+cd InfantGut
 wget https://infantgut.s3.climb.ac.uk/ReadsSub.tar.gz
-  
 tar -xvzf ReadsSub.tar.gz 
 
 cd ~/Storage/
-  
 mkdir Projects
 
 cd ~
@@ -166,12 +170,11 @@ ln -s Storage/Projects .
 
 cd ~/Projects
 
-ls ~/Storage/Data/InfantGut/ReadsSub
+
 rm ~/Storage/Data/InfantGut/ReadsSub/sample8_R*.fastq
 rm ~/Storage/Data/InfantGut/ReadsSub/sample9_R*.fastq
 rm ~/Storage/Data/InfantGut/ReadsSub/sample10_R*.fastq
 rm ~/Storage/Data/InfantGut/ReadsSub/sample11_R*.fastq
-
 
 ln -s ~/Storage/Data/InfantGut/ReadsSub ~/Projects/InfantGut
 
@@ -186,10 +189,25 @@ git clone https://github.com/DerrickWood/kraken.git
 cd kraken
 ./install_kraken.sh ~/bin/
 
-cd ~/Projects/InfantGut
+cd ~
 
-sudo apt install mercurial
+sudo apt install --assume-yes mercurial
 
-pip install matplotlib --use
+pip install matplotlib --user
 
+cd ~/Installation
 
+curl -O https://raw.githubusercontent.com/IFB-ElixirFr/biosphere-commons/master/scripts/utils/biosphere-nextcloud-client.sh
+
+source ./biosphere-nextcloud-client.sh
+
+sudo ~/repos/Ebame4/scripts/RPInstall.sh ggplot2
+sudo ~/repos/Ebame4/scripts/RPInstall.sh reshape
+sudo ~/repos/Ebame4/scripts/RPInstall.sh reshape2
+sudo ~/repos/Ebame4/scripts/RPInstall.sh gplots
+sudo ~/repos/Ebame4/scripts/RPInstall.sh getopt
+sudo ~/repos/Ebame4/scripts/RPInstall.sh vegan
+sudo ~/repos/Ebame4/scripts/RPInstall.sh ellipse
+sudo ~/repos/Ebame4/scripts/RPInstall.sh plyr
+sudo ~/repos/Ebame4/scripts/RPInstall.sh grid
+sudo ~/repos/Ebame4/scripts/RPInstall.sh gridExtra
