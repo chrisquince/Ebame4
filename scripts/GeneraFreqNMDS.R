@@ -6,7 +6,7 @@ library(plyr)
 ClusterK <- read.csv("GeneraKraken.csv",header=TRUE,row.names=1)
 ClusterK <- t(ClusterK)
 ClusterP <- ClusterK/rowSums(ClusterK)
-Meta <- read.csv("~/Data/InfantGut/Meta.csv",header=TRUE,row.names=1)
+Meta <- read.csv("Meta.csv",header=TRUE,row.names=1)
 
 ClusterP <- ClusterP[rownames(Meta),]
 ClusterP.nmds <- metaMDS(ClusterP)
