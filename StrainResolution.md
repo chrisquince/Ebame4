@@ -131,7 +131,7 @@ do
     cp $file SCG_Analysis/$stub
     cd SCG_Analysis/$stub    
 
-    Variant_Filter.py ${stub}.freq -o $stub -p
+    Variant_Filter.py ${stub}.freq -o $stub -p -m 1.0
     
     cd ../..
 done
@@ -204,7 +204,7 @@ python $DESMAN/scripts/resolvenhap.py Cluster14
 
 This should output:
 ```
-2,2,1,0.0033967391304347825,Cluster14_2_1/Filtered_Tau_star.csv
+3,3,0,0.03668261562998405,Cluster14_3_0/Filtered_Tau_star.csv
 ```
 
 This has the format:
@@ -214,7 +214,7 @@ No of haplotypes in best fit, No. of good haplotypes in best fit, Index of best 
 
 Have a look at the prediction file:
 ```
-more Cluster14_2_1/Filtered_Tau_star.csv
+more Cluster14_3_0/Filtered_Tau_star.csv
 ```
 
 The position encoding is ACGT so what are the base predictions at each variant position? 
@@ -224,37 +224,39 @@ We can turn these into actual sequences with the following commands:
 
     cut -d"," -f 1 < Cluster14_scgsel_var.csv | sort | uniq | sed '1d' > coregenes.txt
 
-    mkdir SCG_Fasta_2_1
+    mkdir SCG_Fasta_3_0
     
-    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster14/Cluster14_core.cogs Cluster14_2_1/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_2_1/
+    python $DESMAN/scripts/GetVariantsCore.py ../../Annotate/final_contigs_gt1000_c10K.fa ../..//Split/Cluster14/Cluster14_core.cogs Cluster14_3_0/Filtered_Tau_star.csv coregenes.txt -o SCG_Fasta_3_0/
 ```
 
 This generates one fasta sequence file for each gene with the two strains in:
 
 ```bash
-ls SCG_Fasta_2_1
+ls SCG_Fasta_3_0
 ```
 
 
 ```bash
-python $DESMAN/scripts/validateSNP2.py Cluster14_2_1/Filtered_Tau_star.csv Cluster14_2_1/Filtered_Tau_star.csv
+python $DESMAN/scripts/validateSNP2.py Cluster14_3_0/Filtered_Tau_star.csv Cluster14_3_0/Filtered_Tau_star.csv
 ``` 
 
 
 This gives distance matrices between the true variants and the predictions in terms of SNV and fractions:
 ```bash
-Intersection: 184
-[[ 0 64]
- [64  0]]
-[[0.         0.34782609]
- [0.34782609 0.        ]]
+Intersection: 209
+[[  0  66 173]
+ [ 66   0 180]
+ [173 180   0]]
+[[0.         0.31578947 0.8277512 ]
+ [0.31578947 0.         0.86124402]
+ [0.8277512  0.86124402 0.        ]]
 ```
 
 Now look at time series of strain abundance:
 
 ```
-cp ~/repos/PenrynTutorial/TimeStrain.R .
-Rscript TimeStrain.R -g Cluster7_3_3/Gamma_starR.csv -m ~/Data/InfantGut/sharon_mappingR.txt 
+cp ~/repos/Ebame4/scripts/TimeStrain.R .
+Rscript TimeStrain.R -g Cluster14_3_0/Gamma_starR.csv -m ~/Projects/InfantGut/Meta.csv
 ```
 
 ![Strain time series](./Figures/StrainSeries.png)
