@@ -130,8 +130,8 @@ There is a clear shift in genera level structure over time.
 We can generate this plot either locally or on the server by:
 
 ```
-cp ~/Storage/Data/InfantGut/Meta.csv .
-Rscript ~/bin/GeneraFreqNMDS.R 
+cp ~/repos/Ebame4/Meta.csv .
+Rscript ~/repos/Ebame4/scripts/GeneraFreqNMDS.R 
 ```
 
 
@@ -140,44 +140,6 @@ Discussion points:
 2. Multivariate permutational ANOVA
 
 <a name="functionalprofiling"/>
-
-
-## Running Metaphlan2 on the Infant Gut
-
-
-```
-python ~/Installation/metaphlan2/metaphlan2.py ReadsSub/sample1_R1.fastq,ReadsSub/sample1_R2.fastq --bowtie2out metagenome.bowtie2.bz2 --nproc 8 --input_type fastq
-```
-
-
-
-Note these files are not true interleaved fasta.
-
-```
-mkdir MetaphlanResults
-for file in ReadsSub/*_R1.fastq
-do
-    base=${file##*/}
-    stub=${base%_R1.fastq}
-    rfile=ReadsSub/${stub}_R2.fastq
-    echo $stub
-    
-    python ~/Storage/Installation/metaphlan2/metaphlan2.py $file,$rfile --bowtie2out MetaphlanResults/${stub}.bowtie2.bz2 --input_type fastq --nproc 8 > MetaphlanResults/${stub}_pm.txt
-done
-```
-
-
-
-Then when we are done we merge these tables:
-```
-python ~/Storage/Installation/metaphlan2/utils/merge_metaphlan_tables.py MetaphlanResults/*_pm.txt > MetaphlanResults/merged_abundance_table.txt
-```
-
-and select species:
-```
-~/repos/Ebame4/scripts/SelectSpecies.pl < MetaphlanResults/merged_abundance_table.txt > MetaphlanResults/Species.tsv
-```
-
 
 
 ## Functional gene profiling of Infant Gut reads
