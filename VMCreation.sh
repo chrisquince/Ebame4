@@ -176,6 +176,7 @@ rm ~/Storage/Data/InfantGut/ReadsSub/sample9_R*.fastq
 rm ~/Storage/Data/InfantGut/ReadsSub/sample10_R*.fastq
 rm ~/Storage/Data/InfantGut/ReadsSub/sample11_R*.fastq
 
+mkdir InfantGut
 ln -s ~/Storage/Data/InfantGut/ReadsSub ~/Projects/InfantGut
 
 #Download minikraken database
@@ -211,3 +212,8 @@ sudo ~/repos/Ebame4/scripts/RPInstall.sh ellipse
 sudo ~/repos/Ebame4/scripts/RPInstall.sh plyr
 sudo ~/repos/Ebame4/scripts/RPInstall.sh grid
 sudo ~/repos/Ebame4/scripts/RPInstall.sh gridExtra
+
+sudo apt install --assume-yes mafft
+cd ~/Storage/Databases
+wget https://kegg.s3.climb.ac.uk/Combined.tar.gz 
+tar -xvzf Combined.tar.gz 
