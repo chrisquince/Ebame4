@@ -7,15 +7,11 @@ Login to VM created yesterday.
 
 We are going to process a subset of the classic Sharon et al. (2011) Infant Gut data set:
 ```
-ls ~/Storage/Data/InfantGut/ReadsSub
+cd ~/Projects/InfantGut
+ls ReadsSub
 ```
 
 How many reads are in each sample and how many samples are there?
-
-Lets link `ln` in the Data directory:
-```
-ln -s ~/Data/InfantGut/ReadsSub .
-```
 
 Now we will profile the Infant Gut reads with Kraken. We will use forward reads only:
 
@@ -40,7 +36,6 @@ Would we expect the profile to differ between R1 and R2?
 Can you edit the above to run the R2 reads?
 
 Look at percentage of reads classified. Infant guts are well studied communities.
-
 
 The output is just a text file:
 
