@@ -3,25 +3,7 @@
 
 ## Taxonomic profiling
 
-Login to server:
-
-```
-
-```
-
-We will start by creating a new sub-directory in Projects:
-
-Move into Projects with the `cd` change directory command:
-```
-cd Projects
-```
-
-Create a new directory for our analysis with `mkdir`:
-```
-mkdir InfantGut
-```
-
-Now move into the directory InfantGut (command not supplied) ...
+Login to VM created yesterday.
 
 We are going to process a subset of the classic Sharon et al. (2011) Infant Gut data set:
 ```
