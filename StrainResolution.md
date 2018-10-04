@@ -73,7 +73,7 @@ The first step in pre-processing for DESMAN would be to split up the bam files b
 
 ```
 cd Annotate
-python ~/bin/Lengths.py -i final_contigs_gt1000_c10K.fa > final_contigs_gt1000_c10K.len
+python $DESMAN/scripts/Lengths.py -i final_contigs_gt1000_c10K.fa > final_contigs_gt1000_c10K.len
 cd ..
 ```
 
