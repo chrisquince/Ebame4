@@ -2,6 +2,77 @@
 
 ## Run the DESMAN pipeline to resolve strains in each high quality bin
 
+### What to do if CONCOCT analysis was not completed yesterday:
+
+* Access from your laptop with a web browser
+
+Go to https://134.158.247.98, and fill the login with your username and password. 
+
+If you do not remember (or have no password), you can ask to change it with (fill the field with your email address).
+
+
+* Access from your virtual machines in the IFB-Biosphere cloud
+
+This volume is only accessible from inside the ifb-core-cloud, be sure that your VM is running there.
+
+  1. Connect with SSH to your VM
+
+  2. Mount the volume with
+
+  mount ~/nextcloud
+  
+  You will be asked for your username and password.
+  
+  !! Remember that your username for the volume is the left part of your email address. If the mount is not working, check that the directory '~/nextcloud' and the file '~/.davfs2/secrets' exist. Otherwise you certainly need to install again the DAVFS client, see below how to do this.
+
+
+N.B.1: You can also modify the file '~/.davfs2/secrets' with the EDAME parameters by adding this line at the end:
+
+  https://10.158.16.80/remote.php/webdav/ myVolumeUsername myVolumePassword
+
+
+
+Supplementary material - Installation of the DAVFS client
+---------------------------------------------------------
+
+1. First check if you can copy the template for the davfs2 secrets' file?
+```bash
+sudo cp  /etc/davfs2/secrets ~/.davfs2/secrets
+```
+
+If the template is also not present, follow the instructions below.
+
+2. get the script to install the DAVFS client:
+```bash
+curl -O https://raw.githubusercontent.com/IFB-ElixirFr/biosphere-commons/master/scripts/utils/biosphere-nextcloud-client.sh
+```
+
+3. run it:
+
+source ./biosphere-nextcloud-client.sh
+
+If no error occurred, sign off the current SSH session, sign in again (to enable the right authorizations), and continue to next step.
+
+4.   
+
+```bash
+mount ~/nextcloud
+````
+
+You will be asked for your username and password.
+  
+  !! Remember that your username for the volume is the left part of your email address. 
+  If the mount is not working, check that the directory '~/nextcloud' and the file '~/.davfs2/secrets' exist. 
+  Otherwise you certainly need to install again the DAVFS client, see below how to do this.
+
+Then copy prerun data set:
+```
+cd ~/Projects
+mv InfantGut InfantGut_bkup
+cp ~/nextcloud/ebame-data/InfantGut.tar.gz .
+tar -xvzf InfantGut.tar.gz
+```
+
 ### Getting core variant frequencies
 
 Then we select the SCGS for each cluster:
