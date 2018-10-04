@@ -13,7 +13,7 @@ opt=getopt(spec)
 Gamma <- read.csv(opt$gammafile,header=TRUE,row.names=1)
 GammaK <- Gamma
 GammaP <- GammaK/rowSums(GammaK)
-Meta <- read.table(opt$metafile,sep='\t',header=TRUE)
+Meta <- read.csv(opt$metafile,header=TRUE)
 
 rownames(Meta) <- Meta$Sample
 #colnames(GammaP) <- gsub("^","H",colnames(GammaP))
